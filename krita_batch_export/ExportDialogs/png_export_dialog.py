@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 
+from krita_batch_export.Helper.color_helper import RGB_to_krita_color_format
+
 class PNGExportDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -129,6 +131,6 @@ class PNGExportDialog(QDialog):
         exportInfo.setProperty("saveSRGBProfile", settings["embed_srgb"])
         exportInfo.setProperty("storeAuthor", settings["sign_with_author"])
         exportInfo.setProperty("storeMetaData", settings["store_metadata"])
-        exportInfo.setProperty("transparencyFillcolor", [23, 14, 8])
+        exportInfo.setProperty("transparencyFillcolor", RGB_to_krita_color_format([settings["transparent_color_R"], settings["transparent_color_G"], settings["transparent_color_B"]]))
 
         return exportInfo
