@@ -4,6 +4,7 @@ import re
 from krita import *
 from PyQt5.QtWidgets import QFileDialog, QProgressDialog, QMessageBox
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 
 class BatchExportExtension(Extension):
     def __init__(self, parent):
@@ -19,6 +20,7 @@ class BatchExportExtension(Extension):
         action.triggered.connect(self.batch_export)
 
     def batch_export(self):
+        # Get all currently open documents
         docs = Krita.instance().documents()
         if not docs:
             QMessageBox.information(None, "Batch Export", "No documents open")
@@ -48,11 +50,25 @@ class BatchExportExtension(Extension):
                 ext = '.png'
 
 
+        # Prepare a progress dialog
+        progress_dialog = QProgressDialog("Starting export...", "Cancel", 0, len(docs))
+        progress_dialog.setWindowTitle("Batch Export")
+        progress_dialog.setWindowModality(Qt.WindowModal)
+        progress_dialog.show()
+
+
         # Iterate through all open documents and export them
         for index, doc in enumerate(docs, start=1):
+            # Abort the export if the user clicked "Cancel" in the progress dialog
+            if progress_dialog.wasCanceled():
+                break
+
             # Create a unique filename for each file by appending it with an ascending number
             export_file_name = f"{base}_{index:03}{ext}"
-            print(f"Exporting '{doc.name()}' to '{export_file_name}'...")
+
+            # Update the progress dialog
+            progress_dialog.setLabelText(f"Exporting {index} of {len(docs)}: {export_file_name}")
+            progress_dialog.setValue(index - 1)  # -1 because the index is of the progress bar is 0-based
 
             # Ask for the export settings (e.g. compression level for PNG) only for the first document
             # Krita always uses the last used settings for subsequent exports
@@ -67,7 +83,12 @@ class BatchExportExtension(Extension):
             if not success:
                 print(f"Failed to export '{doc.name()}'")
 
-        print("Batch export completed!")
+        # Complete the progress dialog and close it
+        progress_dialog.setValue(len(docs))
+        progress_dialog.close()
+
+        if not progress_dialog.wasCanceled():
+            QMessageBox.information(None, "Batch Export", "Export completed successfully!")
 
 
 # Add the extension to Krita's list of extensions:
