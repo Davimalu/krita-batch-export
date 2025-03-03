@@ -2,9 +2,12 @@ import os
 import re
 
 from krita import *
-from PyQt5.QtWidgets import QFileDialog, QProgressDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QProgressDialog, QMessageBox, QDialog
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
+
+# Import custom dialogs for supported file formats
+from krita_batch_export.ExportDialogs.png_export_dialog import PNGExportDialog
 
 class BatchExportExtension(Extension):
     def __init__(self, parent):
@@ -27,12 +30,12 @@ class BatchExportExtension(Extension):
             return
 
 
-        # Open a file dialogue to let the user choose a base filename and format
+        # Open a file dialog to let the user choose a base filename and format
         file_name, file_ext = QFileDialog.getSaveFileName(
             None,
             "Select base filename and format",
             "",
-            "PNG image (*.png);;JPEG image (*.jpg);;TIFF image (*.tif);;All Files (*)"
+            "PNG image (*.png);;JPEG image (*.jpg);;TIFF image (*.tif)"
         )
         if not file_name:
             return  # User canceled
@@ -48,6 +51,32 @@ class BatchExportExtension(Extension):
             else:
                 # If the file extension can't be determined from the filter, default to .png
                 ext = '.png'
+
+
+        # Open the appropriate export dialog based on the selected file format (for the selection of compression level, etc.)
+        exportInfo = InfoObject()
+        if ext.lower() == '.png':
+            dialog = PNGExportDialog()
+            if dialog.exec_() == QDialog.Rejected:
+                return  # User canceled the settings dialog
+
+            exportInfo = dialog.getInfoObject()
+
+        elif ext.lower() in ('.jpg', '.jpeg'):
+            # Similar logic for JPEG using a custom JPEG dialog
+            # dialog = JPEGExportDialog()
+            # if dialog.exec_() == QDialog.Rejected:
+            #     return
+            # settings = dialog.getSettings()
+            # info.setProperty("quality", settings["quality"])
+            pass
+        elif ext.lower() == '.tif':
+            # And for TIFF...
+            pass
+        else:
+            # You might want to restrict unsupported formats.
+            QMessageBox.warning(None, "Unsupported format", "This file format is not supported for batch export.")
+            return
 
 
         # Prepare a progress dialog
@@ -70,18 +99,13 @@ class BatchExportExtension(Extension):
             progress_dialog.setLabelText(f"Exporting {index} of {len(docs)}: {export_file_name}")
             progress_dialog.setValue(index - 1)  # -1 because the index is of the progress bar is 0-based
 
-            # Ask for the export settings (e.g. compression level for PNG) only for the first document
-            # Krita always uses the last used settings for subsequent exports
-
-            # FIXME: This isn't best practice since it relies on my personal observations with Krita - it's not an officially documented Feature
-            # FIXME: If this behavior changes in a future version of Krita, this code will break
-            if index != 1:
-                doc.setBatchmode(True)  # no popups while saving
-
-
-            success = doc.exportImage(export_file_name, InfoObject())
+            # Export the document with the specified settings
+            doc.setBatchmode(True)  # disable popups while saving
+            success = doc.exportImage(export_file_name, exportInfo)
             if not success:
                 print(f"Failed to export '{doc.name()}'")
+
+            doc.setBatchmode(False)  # re-enable popups
 
         # Complete the progress dialog and close it
         progress_dialog.setValue(len(docs))
