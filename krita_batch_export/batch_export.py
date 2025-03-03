@@ -1,8 +1,9 @@
-from krita import *
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QIcon
 import os
 import re
+
+from krita import *
+from PyQt5.QtWidgets import QFileDialog, QProgressDialog, QMessageBox
+from PyQt5.QtGui import QIcon
 
 class BatchExportExtension(Extension):
     def __init__(self, parent):
@@ -18,6 +19,12 @@ class BatchExportExtension(Extension):
         action.triggered.connect(self.batch_export)
 
     def batch_export(self):
+        docs = Krita.instance().documents()
+        if not docs:
+            QMessageBox.information(None, "Batch Export", "No documents open")
+            return
+
+
         # Open a file dialogue to let the user choose a base filename and format
         file_name, file_ext = QFileDialog.getSaveFileName(
             None,
@@ -39,13 +46,6 @@ class BatchExportExtension(Extension):
             else:
                 # If the file extension can't be determined from the filter, default to .png
                 ext = '.png'
-
-
-        # Get all currently open documents
-        docs = Krita.instance().documents()
-        if not docs:
-            print("No documents open")
-            return
 
 
         # Iterate through all open documents and export them
