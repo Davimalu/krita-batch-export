@@ -14,6 +14,7 @@ class PNGExportDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("PNG Export Settings")
 
+        # Main vertical layout for the dialog
         main_layout = QVBoxLayout(self)
 
         # --- Compression Section ---
@@ -90,7 +91,7 @@ class PNGExportDialog(QDialog):
 
 
     def _on_select_color(self):
-        """Pop up a color picker to select the transparent color."""
+        """Pop up a color picker to select the transparent color"""
         color = QColorDialog.getColor(Qt.transparent, self, "Select Transparent Color")
         if color.isValid():
             self.transparent_color_R = color.red()
@@ -99,7 +100,7 @@ class PNGExportDialog(QDialog):
 
 
     def getSettings(self):
-        """Return an instance of PNGSettings with the user's chosen settings."""
+        """Return an instance of PNGSettings with the user's chosen settings"""
         return PNGSettings(
             compression=self.compression_slider.value(),
             save_as_indexed=self.save_as_indexed_check.isChecked(),
