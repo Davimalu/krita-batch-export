@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt
 
 # Import custom dialogs for supported file formats
 from krita_batch_export.ExportDialogs.png_export_dialog import PNGExportDialog
+from krita_batch_export.Logic.png_settings_service import PNGSettingsService
 
 class BatchExportExtension(Extension):
     def __init__(self, parent):
@@ -61,7 +62,8 @@ class BatchExportExtension(Extension):
             if dialog.exec_() == QDialog.Rejected:
                 return  # User canceled the settings dialog
 
-            exportInfo = dialog.getInfoObject()
+            PNGSettings = dialog.getSettings()
+            exportInfo = PNGSettingsService.to_info_object(PNGSettings)
 
         elif ext.lower() in ('.jpg', '.jpeg'):
             # Similar logic for JPEG using a custom JPEG dialog

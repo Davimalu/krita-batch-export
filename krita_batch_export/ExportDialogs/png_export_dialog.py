@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 
-from krita_batch_export.Helper.color_helper import RGB_to_krita_color_format
+from krita_batch_export.Model.png_settings import PNGSettings
+
 
 class PNGExportDialog(QDialog):
     def __init__(self, parent=None):
@@ -98,39 +99,19 @@ class PNGExportDialog(QDialog):
 
 
     def getSettings(self):
-        """Return a dictionary of the user's chosen settings"""
-        return {
-            "compression": self.compression_slider.value(),
-            "save_as_indexed": self.save_as_indexed_check.isChecked(),
-            "interlacing": self.interlacing_check.isChecked(),
-            "save_as_hdr": self.save_as_hdr_check.isChecked(),
-            "embed_srgb": self.embed_srgb_check.isChecked(),
-            "force_srgb": self.force_srgb_check.isChecked(),
-            "store_alpha": self.store_alpha_check.isChecked(),
-            "store_metadata": self.store_metadata_check.isChecked(),
-            "sign_with_author": self.sign_with_author_check.isChecked(),
-            "force_eight_bit": self.force_eight_bit_check.isChecked(),
-            "transparent_color_R": self.transparent_color_R,
-            "transparent_color_G": self.transparent_color_G,
-            "transparent_color_B": self.transparent_color_B,
-        }
-
-
-    def getInfoObject(self):
-        """Return an InfoObject() containing the user's chosen settings"""
-        exportInfo = InfoObject()
-        settings = self.getSettings()
-
-        # Populate the InfoObject for PNG export
-        exportInfo.setProperty("alpha", settings["store_alpha"])
-        exportInfo.setProperty("compression", settings["compression"])
-        exportInfo.setProperty("forceSRGB", settings["force_srgb"])
-        exportInfo.setProperty("indexed", settings["save_as_indexed"])
-        exportInfo.setProperty("interlaced", settings["interlacing"])
-        exportInfo.setProperty("saveAsHDR", settings["save_as_hdr"])
-        exportInfo.setProperty("saveSRGBProfile", settings["embed_srgb"])
-        exportInfo.setProperty("storeAuthor", settings["sign_with_author"])
-        exportInfo.setProperty("storeMetaData", settings["store_metadata"])
-        exportInfo.setProperty("transparencyFillcolor", RGB_to_krita_color_format([settings["transparent_color_R"], settings["transparent_color_G"], settings["transparent_color_B"]]))
-
-        return exportInfo
+        """Return an instance of PNGSettings with the user's chosen settings."""
+        return PNGSettings(
+            compression=self.compression_slider.value(),
+            save_as_indexed=self.save_as_indexed_check.isChecked(),
+            interlacing=self.interlacing_check.isChecked(),
+            save_as_hdr=self.save_as_hdr_check.isChecked(),
+            embed_srgb=self.embed_srgb_check.isChecked(),
+            force_srgb=self.force_srgb_check.isChecked(),
+            store_alpha=self.store_alpha_check.isChecked(),
+            store_metadata=self.store_metadata_check.isChecked(),
+            sign_with_author=self.sign_with_author_check.isChecked(),
+            force_eight_bit=self.force_eight_bit_check.isChecked(),
+            transparent_color_R=self.transparent_color_R,
+            transparent_color_G=self.transparent_color_G,
+            transparent_color_B=self.transparent_color_B,
+        )
