@@ -1,15 +1,14 @@
-from krita import *
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSlider,
     QCheckBox, QPushButton, QColorDialog
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
 
 from krita_batch_export.Model.png_settings import PNGSettings
 
 
 class PNGExportDialog(QDialog):
+    """Dialog for setting PNG export options"""
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("PNG Export Settings")
@@ -52,6 +51,7 @@ class PNGExportDialog(QDialog):
         # Checkboxes checked by default
         self.embed_srgb_check.setChecked(True)
 
+        # Add checkboxes to the layout
         main_layout.addWidget(self.save_as_indexed_check)
         main_layout.addWidget(self.interlacing_check)
         main_layout.addWidget(self.save_as_hdr_check)

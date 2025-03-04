@@ -1,6 +1,6 @@
 from krita import *
 
-from krita_batch_export.Helper.color_helper import RGB_to_krita_color_format
+from krita_batch_export.Logic.color_service import ColorService
 from krita_batch_export.Model.png_settings import PNGSettings
 
 
@@ -46,7 +46,7 @@ class PNGSettingsService:
         exportInfo.setProperty("storeMetaData", settings.store_metadata)
         exportInfo.setProperty(
             "transparencyFillcolor",
-            RGB_to_krita_color_format(
+            ColorService.RGB_to_krita_color_format(
                 [settings.transparent_color_R, settings.transparent_color_G, settings.transparent_color_B]
             ),
         )
