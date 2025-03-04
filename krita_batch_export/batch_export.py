@@ -1,5 +1,3 @@
-import os
-import re
 import time
 
 from krita import *
@@ -10,6 +8,8 @@ from PyQt5.QtCore import Qt
 # Import custom dialogs for supported file formats
 from krita_batch_export.ExportDialogs.png_export_dialog import PNGExportDialog
 from krita_batch_export.Logic.png_settings_service import PNGSettingsService
+from krita_batch_export.Logic.krita_service import KritaService
+from krita_batch_export.Logic.file_service import FileService
 
 class BatchExportExtension(Extension):
     def __init__(self, parent):
@@ -25,35 +25,14 @@ class BatchExportExtension(Extension):
         action.triggered.connect(self.batch_export)
 
     def batch_export(self):
-        # Get all currently open documents
-        docs = Krita.instance().documents()
+        # Get a list of all open documents in Krita
+        docs = KritaService.get_all_open_documents()
         if not docs:
             QMessageBox.information(None, "Batch Export", "No documents open")
             return
 
-
-        # Open a file dialog to let the user choose a base filename and format
-        file_name, file_ext = QFileDialog.getSaveFileName(
-            None,
-            "Select base filename and format",
-            "",
-            "PNG image (*.png);;JPEG image (*.jpg);;TIFF image (*.tif)"
-        )
-        if not file_name:
-            return  # User canceled
-
-
-        # Get the base filename and extension
-        base, ext = os.path.splitext(file_name)
-        # If the file extension wasn't specified in the file name, try to determine it from the selected filter
-        if not ext:
-            match = re.search(r"\*\.(\w+)", file_ext) # Match the file extension in the filter, e.g. '*.png'
-            if match:
-                ext = '.' + match.group(1)  # extract the extension from the match, e.g. 'png'
-            else:
-                # If the file extension can't be determined from the filter, default to .png
-                ext = '.png'
-
+        # Ask the user where to save the files, get the base filename (full file path) and extension
+        base, ext = FileService.get_file_path()
 
         # Open the appropriate export dialog based on the selected file format (for the selection of compression level, etc.)
         exportInfo = InfoObject()
