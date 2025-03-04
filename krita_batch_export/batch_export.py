@@ -35,31 +35,9 @@ class BatchExportExtension(Extension):
         base, ext = FileService.get_file_path()
 
         # Open the appropriate export dialog based on the selected file format (for the selection of compression level, etc.)
-        exportInfo = InfoObject()
-        if ext.lower() == '.png':
-            dialog = PNGExportDialog()
-            if dialog.exec_() == QDialog.Rejected:
-                return  # User canceled the settings dialog
-
-            PNGSettings = dialog.getSettings()
-            exportInfo = PNGSettingsService.to_info_object(PNGSettings)
-
-        elif ext.lower() in ('.jpg', '.jpeg'):
-            # Similar logic for JPEG using a custom JPEG dialog
-            # dialog = JPEGExportDialog()
-            # if dialog.exec_() == QDialog.Rejected:
-            #     return
-            # settings = dialog.getSettings()
-            # info.setProperty("quality", settings["quality"])
-            pass
-        elif ext.lower() == '.tif':
-            # And for TIFF...
-            pass
-        else:
-            # You might want to restrict unsupported formats.
-            QMessageBox.warning(None, "Unsupported format", "This file format is not supported for batch export.")
-            return
-
+        exportInfo = FileService.create_export_info(ext)
+        if not exportInfo:
+            return  # user canceled or unsupported format
 
         # Prepare a progress dialog
         progress_dialog = QProgressDialog("Starting export...", "Cancel", 0, len(docs))

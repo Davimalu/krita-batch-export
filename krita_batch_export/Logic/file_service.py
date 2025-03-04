@@ -1,8 +1,9 @@
 import os
 import re
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
 
-from krita_batch_export.Logic.config_service import ConfigService
+from krita_batch_export.Config.export_handlers import EXPORT_HANDLERS
+from krita_batch_export.Config.config_service import ConfigService
 
 
 class FileService:
@@ -43,3 +44,36 @@ class FileService:
                 ext = '.png'
 
         return base, ext
+
+
+    @staticmethod
+    def create_export_info(ext):
+        """
+        Given a file extension (e.g., '.png'), opens the appropriate export dialog
+        and returns an InfoObject with the export settings. Returns None if canceled or unsupported.
+        """
+        ext_lower = ext.lower()
+
+        # Look up the handler for this extension (stored in export_handlers.py)
+        handler = EXPORT_HANDLERS.get(ext_lower)
+        if not handler:
+            QMessageBox.warning(
+                None,
+                "Unsupported format",
+                f"The {ext} file format is not supported by this plugin."
+            )
+            return None
+
+        # Unpack the handler into the dialog class and service class
+        dialog_class = handler["dialog"]
+        service_class = handler["service"]
+
+        # Open the dialog
+        dialog = dialog_class()
+        if dialog.exec_() == QDialog.Rejected:
+            return None  # user canceled
+
+        # Convert the dialog settings to an InfoObject
+        settings = dialog.getSettings()
+        export_info = service_class.to_info_object(settings)
+        return export_info
