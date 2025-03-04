@@ -1,8 +1,9 @@
 import os
 import re
+import time
 
 from krita import *
-from PyQt5.QtWidgets import QFileDialog, QProgressDialog, QMessageBox, QDialog
+from PyQt5.QtWidgets import QFileDialog, QProgressDialog, QMessageBox, QDialog, QLabel, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
@@ -85,6 +86,10 @@ class BatchExportExtension(Extension):
         progress_dialog.setWindowModality(Qt.WindowModal)
         progress_dialog.show()
 
+        # Start timer to measure the time taken for the export
+        start_time = time.time()
+        elapsed_time = 0
+        estimated_time_remaining = 0
 
         # Iterate through all open documents and export them
         for index, doc in enumerate(docs, start=1):
@@ -96,8 +101,16 @@ class BatchExportExtension(Extension):
             export_file_name = f"{base}_{index:03}{ext}"
 
             # Update the progress dialog
-            progress_dialog.setLabelText(f"Exporting {index} of {len(docs)}: {export_file_name}")
+            progress_dialog.setLabelText(
+                f"Exporting {index} of {len(docs)}: {export_file_name}\n"
+                f"\n"
+                f"Elapsed Time: {elapsed_time:.2f} s\n"
+                f"Remaining Time: {estimated_time_remaining:.2f} s"
+            )
             progress_dialog.setValue(index - 1)  # -1 because the index is of the progress bar is 0-based
+
+            # Process GUI events | If this isn't done, the export loop monopolizes the main thread and the GUI can't render properly
+            QApplication.processEvents()
 
             # Export the document with the specified settings
             doc.setBatchmode(True)  # disable popups while saving
@@ -106,6 +119,11 @@ class BatchExportExtension(Extension):
                 print(f"Failed to export '{doc.name()}'")
 
             doc.setBatchmode(False)  # re-enable popups
+
+            # Calculate elapsed time
+            elapsed_time = time.time() - start_time
+            # Calculate estimated time remaining based on the progress so far
+            estimated_time_remaining = (elapsed_time / index) * (len(docs) - index)
 
         # Complete the progress dialog and close it
         progress_dialog.setValue(len(docs))
