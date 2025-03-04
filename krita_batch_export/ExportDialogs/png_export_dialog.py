@@ -93,8 +93,8 @@ class PNGExportDialog(QDialog):
         color = QColorDialog.getColor(Qt.transparent, self, "Select Transparent Color")
         if color.isValid():
             self.transparent_color_R = color.red()
-            self.transparent_color_B = color.green()
-            self.transparent_color_G = color.blue()
+            self.transparent_color_G = color.green()
+            self.transparent_color_B = color.blue()
 
 
     def getSettings(self):
