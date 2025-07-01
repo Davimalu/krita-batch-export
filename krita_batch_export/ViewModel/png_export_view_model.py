@@ -122,6 +122,16 @@ class PNGExportViewModel(QObject):
             self.sign_with_author_changed.emit(value)
 
     @property
+    def force_eight_bit(self):
+        return self._model.force_eight_bit
+
+    @force_eight_bit.setter
+    def force_eight_bit(self, value):
+        if self._model.force_eight_bit != value:
+            self._model.force_eight_bit = value
+            self.force_eight_bit_changed.emit(value)
+
+    @property
     def transparent_color(self):
         return QColor(
             self._model.transparent_color_R,

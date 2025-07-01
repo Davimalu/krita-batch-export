@@ -207,7 +207,7 @@ class PNGExportView(QDialog):
     def getSettings(self):
         """Returns the user's chosen settings for the PNG export"""
         return PNGSettings(
-            compression=self.vm.model,
+            compression=self.vm.compression,
             save_as_indexed=self.vm.save_as_indexed,
             interlacing=self.vm.interlacing,
             save_as_hdr=self.vm.save_as_hdr,
