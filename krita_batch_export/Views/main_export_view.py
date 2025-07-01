@@ -125,7 +125,6 @@ class MainExportView(QDialog):
     def _style_widgets(self):
         """Applies basic styles to the widgets."""
         self.export_path_textbox.setReadOnly(True)
-        self.export_path_textbox.setStyleSheet("background-color: #f0f0f0;")
 
         # Style buttons
         self.export_button.setStyleSheet("background-color: #0078d7; color: white; padding: 5px;")
