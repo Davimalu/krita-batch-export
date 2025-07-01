@@ -1,4 +1,5 @@
 class PNGSettings:
+    """Class to hold the settings for the PNG export as chosen by the user"""
     def __init__(self, compression=3, save_as_indexed=False, interlacing=False, save_as_hdr=False,
                  embed_srgb=True, force_srgb=False, store_alpha=False, store_metadata=False,
                  sign_with_author=False, force_eight_bit=False, transparent_color_R=0,
