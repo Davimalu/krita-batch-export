@@ -65,25 +65,22 @@ class FileService:
             )
             return None
 
-        # Unpack the handler into the view, viewModel, and service classes
+        # Unpack the handler into model, view, view_model, and service classes
+        model_class = handler["model"]
         view_class = handler["view"]
         view_model_class = handler["viewModel"]
         service_class = handler["service"]
 
-        # TEST CODE BEGIN
-
-        png_model = PNGSettings()
-        png_view_model = view_model_class(png_model)
-        png_view = view_class(png_view_model)
-
-        # TEST CODE END
+        # Initialize the components
+        view_model = view_model_class(model_class())
+        view = view_class(view_model)
 
         # Open the dialog
-        if png_view.exec_() == QDialog.Rejected:
+        if view.exec_() == QDialog.Rejected:
             return None  # user canceled
 
         # Get the settings the user has chosen in the dialog
-        settings = png_view.getSettings()
+        settings = view.getSettings()
 
         # Convert the dialog settings to an InfoObject (Krita's export settings format)
         export_info = service_class.to_info_object(settings)
