@@ -8,6 +8,10 @@ from PyQt5.QtCore import Qt
 # Import custom dialogs for supported file formats
 from krita_batch_export.Logic.krita_service import KritaService
 from krita_batch_export.Logic.file_service import FileService
+from krita_batch_export.Model.general_settings import GeneralSettings
+from krita_batch_export.ViewModel.main_export_view_model import MainExportViewModel
+from krita_batch_export.Views.main_export_view import MainExportView
+
 
 class BatchExportExtension(Extension):
     def __init__(self, parent):
@@ -27,6 +31,15 @@ class BatchExportExtension(Extension):
         docs = KritaService.get_all_open_documents()
         if not docs:
             QMessageBox.information(None, "Batch Export", "No documents open")
+            return
+
+        # Open the main export dialog to let the user choose export settings
+        main_window_settings = GeneralSettings()
+        main_window_view_model = MainExportViewModel(main_window_settings)
+        main_window_view = MainExportView(main_window_view_model)
+
+        # If the user clicks "Cancel" in the main dialog, exit the batch export
+        if main_window_view.exec_() != QDialog.Accepted:
             return
 
         # Ask the user where to save the files, get the base filename (full file path) and extension

@@ -9,8 +9,19 @@ from krita_batch_export.ViewModel.png_export_view_model import PNGExportViewMode
 
 
 class PNGExportView(QDialog):
-    """Dialog for setting PNG export options"""
+    """
+    The dialog window presented to the user when exporting images as PNG.
+    Allows the user to set PNG-specific export options such as compression level, alpha channel handling, etc.
+    """
     def __init__(self, view_model, parent=None):
+        """
+        Initializes the PNGExportView.
+
+        Args:
+            view_model: An instance of PNGExportViewModel to bind to this view.
+            parent: The parent widget, if any.
+        """
+
         super().__init__(parent)
 
         # Associate the View with the ViewModel
@@ -33,6 +44,7 @@ class PNGExportView(QDialog):
         # --- Connect View and ViewModel ---
         self._bind_view_to_viewmodel()
         self._bind_viewmodel_to_view()
+        self._update_ui_from_viewmodel()
 
         # TODO: Use logic in the ViewModel instead
         self.ok_button.clicked.connect(self.accept)
@@ -195,6 +207,8 @@ class PNGExportView(QDialog):
 
     def _on_select_color(self):
         """Pop up a color picker to select the transparent color"""
+        
+        # TODO: Move to ViewModel
         color = QColorDialog.getColor(Qt.transparent, self, "Select Transparent Color")
 
         if color.isValid():
