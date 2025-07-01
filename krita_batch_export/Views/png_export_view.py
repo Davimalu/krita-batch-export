@@ -25,7 +25,6 @@ class PNGExportView(QDialog):
         # Main vertical layout for the dialog
         main_layout = QVBoxLayout(self)
 
-
         # --- Setup UI ---
         self._create_widgets()
         self._layout_widgets(main_layout)
@@ -38,8 +37,6 @@ class PNGExportView(QDialog):
         # TODO: Use logic in the ViewModel instead
         self.ok_button.clicked.connect(self.accept)
         self.cancel_button.clicked.connect(self.reject)
-
-        self.setLayout(main_layout)
 
     def _create_widgets(self):
         """Creates the widgets for the PNG export dialog"""
@@ -82,8 +79,6 @@ class PNGExportView(QDialog):
 
     def _layout_widgets(self, main_layout):
         """Layouts the widgets in the dialog"""
-        # Main vertical layout
-        main_layout = QVBoxLayout(self)
 
         # Compression Section
         main_layout.addWidget(self.compression_label)
