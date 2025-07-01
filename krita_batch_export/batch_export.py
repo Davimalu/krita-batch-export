@@ -6,8 +6,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
 # Import custom dialogs for supported file formats
-from krita_batch_export.ExportDialogs.png_export_dialog import PNGExportDialog
-from krita_batch_export.Logic.png_settings_service import PNGSettingsService
 from krita_batch_export.Logic.krita_service import KritaService
 from krita_batch_export.Logic.file_service import FileService
 
@@ -20,7 +18,7 @@ class BatchExportExtension(Extension):
 
     def createActions(self, window):
         # Create a new action in Krita's file menu that will trigger the batch export
-        action = window.createAction("batch_export", "Batch Export", "file")
+        action = window.createAction("batch_export", "Batch Export", "tools/scripts")
         action.setIcon(QIcon.fromTheme("document-export"))
         action.triggered.connect(self.batch_export)
 

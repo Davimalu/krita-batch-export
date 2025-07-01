@@ -31,7 +31,7 @@ class PNGSettingsService:
 
     @staticmethod
     def to_info_object(settings: PNGSettings):
-        """Converts the PNGSettings Model to an InfoObject() containing the user's chosen settings"""
+        """Converts the PNGSettings Model to a Krita InfoObject() containing the user's chosen settings"""
         exportInfo = InfoObject()
 
         # Populate the InfoObject for PNG export

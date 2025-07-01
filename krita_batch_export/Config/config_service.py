@@ -1,8 +1,6 @@
 import os
 import json
 
-# FIXME: Strictly speaking, this class is a service and should be in the Logic folder but it kinda makes sense to keep it here
-
 class ConfigService:
     def __init__(self):
         pass

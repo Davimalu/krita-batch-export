@@ -1,27 +1,28 @@
 from PyQt5.QtWidgets import QMessageBox, QDialog
 
-from krita_batch_export.ExportDialogs.png_export_dialog import PNGExportDialog
+from krita_batch_export.ViewModel.png_export_view_model import PNGExportViewModel
+from krita_batch_export.Views.png_export_view import PNGExportView
 from krita_batch_export.Logic.png_settings_service import PNGSettingsService
-# from .jpeg_export_dialog import JPEGExportDialog
-# from .jpeg_service import JPEGSettingsService
-# from .tiff_export_dialog import TIFFExportDialog
-# from .tiff_service import TIFFSettingsService
 
 EXPORT_HANDLERS = {
     ".png": {
-        "dialog": PNGExportDialog,
-        "service": PNGSettingsService,
+        "view": PNGExportView,
+        "viewModel": PNGExportViewModel,
+        "service": PNGSettingsService
     },
     ".jpg": {
-        "dialog": None,  # placeholders for future classes
+        "view": None,  # placeholders for future classes
+        "viewModel": None,
         "service": None,
     },
     ".jpeg": {
-        "dialog": None,
+        "view": None,
+        "viewModel": None,
         "service": None,
     },
     ".tif": {
-        "dialog": None,
+        "view": None,  # placeholders for future classes
+        "viewModel": None,
         "service": None,
     },
 }

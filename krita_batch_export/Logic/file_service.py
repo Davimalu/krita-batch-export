@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
 
 from krita_batch_export.Config.export_handlers import EXPORT_HANDLERS
 from krita_batch_export.Config.config_service import ConfigService
+from krita_batch_export.Model.png_settings import PNGSettings
 
 
 class FileService:
@@ -64,16 +65,27 @@ class FileService:
             )
             return None
 
-        # Unpack the handler into the dialog class and service class
-        dialog_class = handler["dialog"]
+        # Unpack the handler into the view, viewModel, and service classes
+        view_class = handler["view"]
+        view_model_class = handler["viewModel"]
         service_class = handler["service"]
 
+        # TEST CODE BEGIN
+
+        png_model = PNGSettings()
+        png_view_model = view_model_class(png_model)
+        png_view = view_class(png_view_model)
+
+        # TEST CODE END
+
         # Open the dialog
-        dialog = dialog_class()
-        if dialog.exec_() == QDialog.Rejected:
+        if png_view.exec_() == QDialog.Rejected:
             return None  # user canceled
 
-        # Convert the dialog settings to an InfoObject
-        settings = dialog.getSettings()
+        # Get the settings the user has chosen in the dialog
+        settings = png_view.getSettings()
+
+        # Convert the dialog settings to an InfoObject (Krita's export settings format)
         export_info = service_class.to_info_object(settings)
+
         return export_info

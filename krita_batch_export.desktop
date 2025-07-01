@@ -4,4 +4,4 @@ ServiceTypes=Krita/PythonPlugin
 X-KDE-Library=krita_batch_export
 X-Python-2-Compatible=false
 Name=Batch Export
-Comment=exports all open images using one set of export settings
+Comment=exports all currently open images in the chosen image format using the chosen export settings
