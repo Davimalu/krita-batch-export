@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
+from PyQt5.QtWidgets import QDialog
 
 from krita_batch_export.Config.export_handlers import EXPORT_HANDLERS
+from krita_batch_export.QtWrappers.message_box_service import MessageBoxService
 
 
 class ExportService:
@@ -20,8 +21,7 @@ class ExportService:
         # Look up the handler for this extension (stored in export_handlers.py)
         handler = EXPORT_HANDLERS.get(ext_lower)
         if not handler:
-            QMessageBox.warning(
-                None,
+            MessageBoxService.show_warning(
                 "Unsupported format",
                 f"The {ext} file format is not supported by this plugin."
             )
