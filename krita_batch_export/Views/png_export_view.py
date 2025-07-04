@@ -133,20 +133,13 @@ class PNGExportView(QDialog):
         # Set styles for the compression slider
         self.compression_slider.setStyleSheet("""
             QSlider::groove:horizontal {
-                background: #f0f0f0;
                 height: 8px;
             }
             QSlider::handle:horizontal {
-                background: #0078d7;
                 width: 16px;
                 margin: -4px 0;
             }
         """)
-
-        # Set styles for buttons
-        self.ok_button.setStyleSheet("background-color: #4CAF50; color: white;")
-        self.cancel_button.setStyleSheet("background-color: #f44336; color: white;")
-        self.transparent_color_button.setStyleSheet("background-color: #e0e0e0;")
 
 
     def _bind_view_to_viewmodel(self):

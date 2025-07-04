@@ -57,6 +57,7 @@ class MainExportView(QDialog):
         # --- Export Path ---
         self.export_path_label = QLabel("Export Path:")
         self.export_path_textbox = QLineEdit()
+        self.export_path_textbox.setReadOnly(True)
         self.browse_path_button = QPushButton("Browse...")
 
         # --- Filename ---
@@ -124,12 +125,11 @@ class MainExportView(QDialog):
 
     def _style_widgets(self):
         """Applies basic styles to the widgets."""
-        self.export_path_textbox.setReadOnly(True)
 
         # Style buttons
-        self.export_button.setStyleSheet("background-color: #0078d7; color: white; padding: 5px;")
-        self.cancel_button.setStyleSheet("background-color: #e0e0e0; padding: 5px;")
-        self.help_button.setStyleSheet("background-color: #e0e0e0; padding: 5px;")
+        self.export_button.setStyleSheet("padding: 5px;")
+        self.cancel_button.setStyleSheet("padding: 5px;")
+        self.help_button.setStyleSheet("padding: 5px;")
         self.browse_path_button.setStyleSheet("padding: 2px 10px;")
 
     def _set_initial_state(self):

@@ -30,7 +30,7 @@ class BatchExportExtension(Extension):
         # Get a list of all open documents in Krita
         docs = KritaService.get_all_open_documents()
         if not docs:
-            QMessageBox.information(None, "Batch Export", "No documents open")
+            QMessageBox.information(None, "Batch Export", "No documents open") # TODO: Use a Service for this
             return
 
         # Open the main export dialog to let the user choose export settings
