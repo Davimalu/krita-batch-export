@@ -96,7 +96,7 @@ class ExportProgressView(QDialog):
         Connects user interactions from the View to the ViewModel's properties and commands.
         (View -> ViewModel)
         """
-        self.cancel_button.clicked.connect(self.vm.cancel_export)
+        # self.cancel_button.clicked.connect(self.vm.cancel_export)
 
     def _bind_viewmodel_to_view(self):
         """

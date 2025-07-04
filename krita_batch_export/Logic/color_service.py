@@ -7,9 +7,16 @@ class ColorService:
     @staticmethod
     def RGB_to_krita_color_format(rgb):
         """
-        Takes a list containing an RGB color like [R, G, B] (values between 0 and 255)
-        and generates the required XML string for Krita's transparencyFillcolor parameter.
+        Converts RGB values to the XML format required by Krita for color representation.
+
+        Args:
+            rgb (list): A list containing RGB values, e.g., [R, G, B] where each value is between 0 and 255.
+
+        Returns:
+            str: An XML string representing the color in Krita's required format (used for the transparencyFillcolor parameter).
         """
+
+        # TODO: This implementation is not correct
         r, g, b = [channel / 255.0 for channel in rgb]  # Normalize to 0-1 range
 
         color_element = ET.Element("color")

@@ -1,7 +1,14 @@
 import os
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QFileDialog
+import time
 
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QApplication
+
+from krita_batch_export.Logic.export_service import ExportService
+from krita_batch_export.Model.export_progress import ExportProgress
+from krita_batch_export.ViewModel.export_progress_view_model import ExportProgressViewModel
+from krita_batch_export.Views.export_progress_view import ExportProgressView
+from krita_batch_export.Logic.krita_service import KritaService
 from krita_batch_export.Model.general_settings import GeneralSettings
 
 class MainExportViewModel(QObject):
@@ -105,6 +112,8 @@ class MainExportViewModel(QObject):
         TODO: Write documentation
         """
 
+        # TODO: Refactor this, break dependencies
+
         # If the user hasn't set an export path, throw an error | TODO: Handle gracefully in the UI
         if not self.export_path:
             raise ValueError("Export path is not set. Please select a valid export directory.")
@@ -113,3 +122,61 @@ class MainExportViewModel(QObject):
         if not self.filename:
             raise ValueError("Filename is not set. Please enter a valid filename.")
 
+        # Get a list of all open documents in Krita
+        docs = KritaService.get_all_open_documents()
+        if not docs:
+            QMessageBox.information(None, "Batch Export", "No documents open") # TODO: Use a Service for this
+            return
+
+        # Open the appropriate export dialog based on the selected file format (for the selection of compression level, etc.) and get the export settings as a Krita InfoObject
+        export_info = ExportService.get_export_settings(self.file_format)
+        if not export_info:
+            return  # user canceled or unsupported format
+
+        # Prepare a progress dialog
+        progress_bar_settings = ExportProgress(self.export_path)
+        progress_bar_view_model = ExportProgressViewModel(progress_bar_settings)
+        progress_bar_view = ExportProgressView(progress_bar_view_model)
+
+        # Start a timer to measure the time taken for the export
+        start_time = time.time()
+        elapsed_time = 0
+        estimated_time_remaining = 0
+
+        # Iterate through all open documents and export them
+        for index, doc in enumerate(docs, start=1):
+            # Abort the export if the user clicked "Cancel" in the progress dialog
+            # TODO
+
+            # Create a unique filename for each file by appending it with an ascending number
+            export_file_name = f"{self.filename}_{self.start_number + index - 1:03d}.{self.file_format}"
+
+            # Update the progress dialog
+            progress_bar_view_model.file_path = os.path.join(self.export_path, export_file_name)
+            progress_bar_view_model.total_steps = len(docs)
+            progress_bar_view_model.current_step = index
+            progress_bar_view_model.time_elapsed = int(elapsed_time)
+            progress_bar_view_model.time_remaining = int(estimated_time_remaining)
+
+            # Process GUI events | If this isn't done, the export loop monopolizes the main thread and the GUI can't render properly
+            QApplication.processEvents()
+
+            # Export the document with the specified settings
+            doc.setBatchmode(True)  # disable popups while saving
+            success = doc.exportImage(export_file_name, export_info)
+            if not success:
+                print(f"Failed to export '{doc.name()}'")
+
+            doc.setBatchmode(False)  # re-enable popups
+
+            # Calculate elapsed time
+            elapsed_time = time.time() - start_time
+            # Calculate estimated time remaining based on the progress so far
+            estimated_time_remaining = (elapsed_time / index) * (len(docs) - index)
+
+        # Complete the progress dialog and close it
+        progress_bar_view_model.total_steps = len(docs)
+        progress_bar_view_model.current_step = len(docs)
+        progress_bar_view_model.time_elapsed = int(elapsed_time)
+        progress_bar_view_model.time_remaining = int(estimated_time_remaining)
+        progress_bar_view.close()

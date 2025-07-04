@@ -18,11 +18,6 @@ class ConfigService:
             return json.load(f)
 
     @staticmethod
-    def get_file_formats():
-        config = ConfigService.load_config()
-        return config.get("file_formats", [])
-
-    @staticmethod
     def get_version():
         config = ConfigService.load_config()
         return config.get("version", "")

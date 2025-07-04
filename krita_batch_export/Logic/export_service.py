@@ -3,17 +3,18 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
 from krita_batch_export.Config.export_handlers import EXPORT_HANDLERS
 
 
-class FileService:
+class ExportService:
     def __init__(self):
         self._file = None
 
 
     @staticmethod
-    def create_export_info(ext):
+    def get_export_settings(ext):
         """
-        Given a file extension (e.g., '.png'), opens the appropriate export dialog
+        Given a file extension (e.g., 'png'), opens the appropriate export dialog
         and returns an InfoObject with the export settings. Returns None if canceled or unsupported.
         """
+        # Normalize the extension to lowercase
         ext_lower = ext.lower()
 
         # Look up the handler for this extension (stored in export_handlers.py)
@@ -26,11 +27,11 @@ class FileService:
             )
             return None
 
-        # Unpack the handler into model, view, view_model, and service classes
+        # Unpack the handler into model, view, view_model, and converter class
         model_class = handler["model"]
         view_class = handler["view"]
         view_model_class = handler["viewModel"]
-        service_class = handler["service"]
+        converter_class = handler["converter"]
 
         # Initialize the components
         view_model = view_model_class(model_class())
@@ -41,9 +42,9 @@ class FileService:
             return None  # user canceled
 
         # Get the settings the user has chosen in the dialog
-        settings = view.getSettings()
+        settings = view_model.get_current_export_settings()
 
         # Convert the dialog settings to an InfoObject (Krita's export settings format)
-        export_info = service_class.to_info_object(settings)
+        export_info = converter_class.to_info_object(settings)
 
         return export_info

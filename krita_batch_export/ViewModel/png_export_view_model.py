@@ -152,3 +152,15 @@ class PNGExportViewModel(QObject):
             self._model.transparent_color_G = new_color[1]
             self._model.transparent_color_B = new_color[2]
             self.transparent_color_changed.emit(qColor_value)
+
+    # --- Commands ---
+
+    # -- Additional logic ---
+    def get_current_export_settings(self):
+        """
+        Returns the current export settings as a PNGSettings object.
+
+        Returns:
+            PNGSettings: The current export settings.
+        """
+        return self._model

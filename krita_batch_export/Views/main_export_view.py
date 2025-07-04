@@ -77,7 +77,7 @@ class MainExportView(QDialog):
 
         # --- Bottom Bar ---
         self.version_label = QLabel("Krita Batch Export v0.1.0")
-        self.bug_report_button = QPushButton("\U0001F47E Report a Bug")
+        self.bug_report_button = QPushButton("Report a Bug")
         self.export_button = QPushButton("Export")
         self.cancel_button = QPushButton("Cancel")
 
