@@ -1,10 +1,6 @@
-import os
-import re
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
 
 from krita_batch_export.Config.export_handlers import EXPORT_HANDLERS
-from krita_batch_export.Config.config_service import ConfigService
-from krita_batch_export.Model.png_settings import PNGSettings
 
 
 class FileService:

@@ -39,17 +39,11 @@ class MainExportView(QDialog):
         self._create_widgets()
         self._layout_widgets(main_layout)
         self._style_widgets()
-        self._set_initial_state()
 
         # --- Connect View and ViewModel ---
         self._bind_view_to_viewmodel()
         self._bind_viewmodel_to_view()
         self._update_ui_from_viewmodel()
-
-        # TODO: Move these connections to the bind_view_to_viewmodel method and move the logic to the ViewModel
-        self.export_button.clicked.connect(self.accept)
-        self.cancel_button.clicked.connect(self.reject)
-        self.help_button.clicked.connect(self._on_help)
 
     def _create_widgets(self):
         """Creates all the widgets needed for the main export dialog"""
@@ -83,7 +77,7 @@ class MainExportView(QDialog):
 
         # --- Bottom Bar ---
         self.version_label = QLabel("Krita Batch Export v0.1.0")
-        self.help_button = QPushButton("\U0001F47E Report a Bug")
+        self.bug_report_button = QPushButton("\U0001F47E Report a Bug")
         self.export_button = QPushButton("Export")
         self.cancel_button = QPushButton("Cancel")
 
@@ -115,7 +109,7 @@ class MainExportView(QDialog):
 
         # --- Bottom Bar ---
         bottom_bar_layout = QHBoxLayout()
-        bottom_bar_layout.addWidget(self.help_button)
+        bottom_bar_layout.addWidget(self.bug_report_button)
         bottom_bar_layout.addWidget(self.version_label)
         bottom_bar_layout.addStretch()  # Pushes buttons to the right
         bottom_bar_layout.addWidget(self.cancel_button)
@@ -128,17 +122,8 @@ class MainExportView(QDialog):
         # Style buttons
         self.export_button.setStyleSheet("padding: 5px;")
         self.cancel_button.setStyleSheet("padding: 5px;")
-        self.help_button.setStyleSheet("padding: 5px;")
+        self.bug_report_button.setStyleSheet("padding: 5px;")
         self.browse_path_button.setStyleSheet("padding: 2px 10px;")
-
-    def _set_initial_state(self):
-        """Sets the initial state of widgets that depend on system state."""
-
-
-        # TODO: Move logic to ViewModel
-        # Set the default export path to the user's home directory
-        home_dir = os.path.expanduser("~")
-        self.export_path_textbox.setText(home_dir)
 
     def _bind_view_to_viewmodel(self):
         """
@@ -152,6 +137,9 @@ class MainExportView(QDialog):
 
         # Bind button clicks to ViewModel commands
         self.browse_path_button.clicked.connect(self.vm.execute_select_export_path)
+        self.bug_report_button.clicked.connect(self.vm.execute_bug_report)
+        self.export_button.clicked.connect(self.vm.execute_start_export)
+        self.cancel_button.clicked.connect(self.reject)
 
     def _bind_viewmodel_to_view(self):
         """
@@ -172,7 +160,3 @@ class MainExportView(QDialog):
         self.filename_textbox.setText(self.vm.filename)
         self.file_format_combo.setCurrentText(self.vm.file_format)
         self.start_number_spinbox.setValue(self.vm.start_number)
-
-    def _on_help(self):
-        # TODO: Just a placeholder, implement in the ViewModel
-        print("Help button clicked!")

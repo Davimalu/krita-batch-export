@@ -1,3 +1,4 @@
+import os
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QFileDialog
 
@@ -19,6 +20,9 @@ class MainExportViewModel(QObject):
             raise TypeError("The model must be an instance of GeneralSettings")
 
         self._model = model
+
+        # Set the default export path to the user's home directory
+        self.export_path = os.path.expanduser("~")
 
     # --- Properties for Data Binding ---
     @property
@@ -86,3 +90,26 @@ class MainExportViewModel(QObject):
 
             # Notify the UI about the change
             self.export_path_changed.emit(directory)
+
+    @pyqtSlot()
+    def execute_bug_report(self):
+        """
+        Opens the default web browser to the project's GitHub issues page for bug reporting.
+        """
+        import webbrowser
+        webbrowser.open("https://github.com/Davimalu/krita-batch-export/issues/new")
+
+    @pyqtSlot()
+    def execute_start_export(self):
+        """
+        TODO: Write documentation
+        """
+
+        # If the user hasn't set an export path, throw an error | TODO: Handle gracefully in the UI
+        if not self.export_path:
+            raise ValueError("Export path is not set. Please select a valid export directory.")
+
+        # If the user hasn't set a filename, throw an error | TODO: Handle gracefully in the UI
+        if not self.filename:
+            raise ValueError("Filename is not set. Please enter a valid filename.")
+
