@@ -137,6 +137,7 @@ class MainExportViewModel(QObject):
         progress_bar_settings = ExportProgress(self.export_path)
         progress_bar_view_model = ExportProgressViewModel(progress_bar_settings)
         progress_bar_view = ExportProgressView(progress_bar_view_model)
+        progress_bar_view.show()
 
         # Start a timer to measure the time taken for the export
         start_time = time.time()

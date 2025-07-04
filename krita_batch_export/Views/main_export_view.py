@@ -60,7 +60,7 @@ class MainExportView(QDialog):
         self.filename_textbox.setPlaceholderText("e.g., MyImage_###")
 
         # --- Start Number ---
-        self.start_number_label = QLabel("Start Number:")
+        self.start_number_label = QLabel("Start Numbering at:")
         self.start_number_spinbox = QSpinBox()
 
         self.start_number_spinbox.setRange(0, 9999)
