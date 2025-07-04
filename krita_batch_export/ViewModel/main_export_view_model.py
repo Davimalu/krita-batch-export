@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QFileDialog
 
 from krita_batch_export.Model.general_settings import GeneralSettings
 
@@ -59,3 +60,29 @@ class MainExportViewModel(QObject):
         if self._model.start_number != value:
             self._model.start_number = value
             self.start_number_changed.emit(value)
+
+    # --- Commands ---
+
+    @pyqtSlot()
+    def execute_select_export_path(self):
+        """
+        Opens a file dialog where the user can select the export path where the images will be saved.
+        Updates the export_path property in the ViewModel with the selected directory.
+        """
+
+        # TODO: Use an abstraction layer to get rid of the direct dependency on QFileDialog
+        current_path = self.export_path
+
+        # Open the file dialog
+        directory = QFileDialog.getExistingDirectory(
+            None,
+            "Select Export Directory",
+            self.export_path
+        )
+
+        # If a directory was selected, update the export path
+        if directory and directory != current_path:
+            self.export_path = directory
+
+            # Notify the UI about the change
+            self.export_path_changed.emit(directory)

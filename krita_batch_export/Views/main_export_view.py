@@ -47,7 +47,6 @@ class MainExportView(QDialog):
         self._update_ui_from_viewmodel()
 
         # TODO: Move these connections to the bind_view_to_viewmodel method and move the logic to the ViewModel
-        self.browse_path_button.clicked.connect(self._on_browse_path)
         self.export_button.clicked.connect(self.accept)
         self.cancel_button.clicked.connect(self.reject)
         self.help_button.clicked.connect(self._on_help)
@@ -84,7 +83,7 @@ class MainExportView(QDialog):
 
         # --- Bottom Bar ---
         self.version_label = QLabel("Krita Batch Export v0.1.0")
-        self.help_button = QPushButton("Help")
+        self.help_button = QPushButton("\U0001F47E Report a Bug")
         self.export_button = QPushButton("Export")
         self.cancel_button = QPushButton("Cancel")
 
@@ -116,8 +115,8 @@ class MainExportView(QDialog):
 
         # --- Bottom Bar ---
         bottom_bar_layout = QHBoxLayout()
-        bottom_bar_layout.addWidget(self.version_label)
         bottom_bar_layout.addWidget(self.help_button)
+        bottom_bar_layout.addWidget(self.version_label)
         bottom_bar_layout.addStretch()  # Pushes buttons to the right
         bottom_bar_layout.addWidget(self.cancel_button)
         bottom_bar_layout.addWidget(self.export_button)
@@ -152,7 +151,7 @@ class MainExportView(QDialog):
         self.start_number_spinbox.valueChanged.connect(lambda value: setattr(self.vm, "start_number", value))
 
         # Bind button clicks to ViewModel commands
-        self.browse_path_button.clicked.connect(self._on_browse_path)
+        self.browse_path_button.clicked.connect(self.vm.execute_select_export_path)
 
     def _bind_viewmodel_to_view(self):
         """
@@ -173,29 +172,6 @@ class MainExportView(QDialog):
         self.filename_textbox.setText(self.vm.filename)
         self.file_format_combo.setCurrentText(self.vm.file_format)
         self.start_number_spinbox.setValue(self.vm.start_number)
-
-    def _on_browse_path(self):
-        """
-        Opens a QFileDialog to allow the user to select an export directory.
-        The selected path is then passed to the ViewModel.
-        """
-
-        # TODO: The logic for opening the file dialog should be implemented in the ViewModel, possibly using an abstraction layer to avoid having a direct dependency on QFileDialog in the ViewModel
-
-        current_path = self.export_path_textbox.text()
-
-        # Open the file dialog
-        directory = QFileDialog.getExistingDirectory(
-            self,
-            "Select Export Directory",
-            current_path
-        )
-
-        # If a directory was selected, update the ViewModel
-        if directory and directory != current_path:
-            # Update the text in the textbox and in the ViewModel
-            self.export_path_textbox.setText(directory)
-            setattr(self.vm, "export_path", directory)
 
     def _on_help(self):
         # TODO: Just a placeholder, implement in the ViewModel

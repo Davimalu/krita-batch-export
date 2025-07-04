@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtGui import QColor
 
 from krita_batch_export.Model.png_settings import PNGSettings
 
